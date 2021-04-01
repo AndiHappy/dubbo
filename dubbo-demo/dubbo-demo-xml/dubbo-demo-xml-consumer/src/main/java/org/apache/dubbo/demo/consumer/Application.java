@@ -31,6 +31,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-consumer.xml");
         context.start();
+        Thread.sleep(1000);
         DemoService demoService = context.getBean("demoService", DemoService.class);
         GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
 
