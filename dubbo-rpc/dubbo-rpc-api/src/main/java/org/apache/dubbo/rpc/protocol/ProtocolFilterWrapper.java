@@ -75,6 +75,7 @@ public class ProtocolFilterWrapper implements Protocol {
         return protocol.export(buildInvokerChain(invoker, SERVICE_FILTER_KEY, CommonConstants.PROVIDER));
     }
 
+    // protocol 远程调用层：封装 RPC 调用，以 Invocation, Result 为中心，扩展接口为 Protocol, Invoker, Exporter
     @Override
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
         if (UrlUtils.isRegistry(url)) {

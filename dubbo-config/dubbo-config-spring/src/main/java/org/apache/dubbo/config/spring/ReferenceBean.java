@@ -41,6 +41,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
 
 /**
  * ReferenceFactoryBean
+ * debug的时候，对应的是：<dubbo:reference>
  */
 public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
         ApplicationContextAware, InitializingBean, DisposableBean {

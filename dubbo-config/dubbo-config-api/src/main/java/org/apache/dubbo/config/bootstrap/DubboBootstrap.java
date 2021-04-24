@@ -190,6 +190,7 @@ public class DubboBootstrap extends GenericEventListener {
     /**
      * See {@link ApplicationModel} and {@link ExtensionLoader} for why DubboBootstrap is designed to be singleton.
      */
+    // 单例模式，在consumer的时候，debug到
     public static DubboBootstrap getInstance() {
         if (instance == null) {
             synchronized (DubboBootstrap.class) {

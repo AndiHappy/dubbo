@@ -181,6 +181,9 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         dispatch(new ServiceConfigUnexportedEvent(this));
     }
 
+    /**
+     * 中配置的interface合法性检查:接口不能为空,检查接口类型必需为接口，检查方法是否在接口中存在（checkInterfaceAndMethods）；
+     * */
     public synchronized void export() {
         if (bootstrap == null) {
             bootstrap = DubboBootstrap.getInstance();
@@ -198,6 +201,10 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             return;
         }
 
+        /**
+         * dubbo服务延迟暴露的一个点，delay这个参数可以配置在或者中，目的是为了延迟注册服务时间(毫秒) ，
+         * 设为-1时，表示延迟到Spring容器初始化完成时暴露服务。一些特殊的场景，可以通过修改该参数来解决服务刚启动接口响应较慢的案例
+         * */
         if (shouldDelay()) {
             DELAY_EXPORT_EXECUTOR.schedule(this::doExport, getDelay(), TimeUnit.MILLISECONDS);
         } else {
@@ -304,6 +311,13 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         bootstrap.setReady(true);
     }
 
+    /**
+     * 在ServiceConfig.doExportUrls()方法，这里会进行多协议暴露服务，
+     * 由于dubbo不仅支持dubbo协议同时还支持http、webservice、thrift等协议。
+     * 如果我们配置的service需要同时提供多种服务，那么会根据不同的协议进行循环暴露。
+     * <dubbo:service interface="com.alibaba.dubbo.demo.hello.HelloService" ref="helloService" timeout="300" protocol="dubbo"></dubbo:service>
+     * <dubbo:service interface="com.alibaba.dubbo.demo.hello.HelloService" ref="helloService" timeout="300" protocol="http"></dubbo:service>
+     * */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
         ServiceRepository repository = ApplicationModel.getServiceRepository();

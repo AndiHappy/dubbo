@@ -198,6 +198,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         this.services = services;
     }
 
+    // get的就是 ReferenceConfig 没有的情况下，会进行初始化的
     public synchronized T get() {
         if (destroyed) {
             throw new IllegalStateException("The invoker of ReferenceConfig(" + url + ") has already destroyed!");
@@ -228,6 +229,11 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         dispatch(new ReferenceConfigDestroyedEvent(this));
     }
 
+    /**
+     * ReferenceConfig 为 get bean 的关键类中的一个，保持关注，文档中说明：
+     * config 配置层：对外配置接口，以 ServiceConfig, ReferenceConfig 为中心，可以直接初始化配置类，也可以通过 spring 解析配置生成配置类
+     *
+     * */
     public synchronized void init() {
         if (initialized) {
             return;
@@ -322,7 +328,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
     @SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
     private T createProxy(Map<String, String> map) {
-        if (shouldJvmRefer(map)) {
+        if (shouldJvmRefer(map)) { //TODO:  是否是JVM，本地的引用，这个判断，可以当做一个点
             URL url = new URL(LOCAL_PROTOCOL, LOCALHOST_VALUE, 0, interfaceClass.getName()).addParameters(map);
             invoker = REF_PROTOCOL.refer(interfaceClass, url);
             if (logger.isInfoEnabled()) {
@@ -356,7 +362,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                             if (monitorUrl != null) {
                                 map.put(MONITOR_KEY, URL.encode(monitorUrl.toFullString()));
                             }
-                            urls.add(u.addParameterAndEncoded(REFER_KEY, StringUtils.toQueryString(map)));
+                            // Note
+                            URL urlcons = u.addParameterAndEncoded(REFER_KEY, StringUtils.toQueryString(map));
+                            urls.add(urlcons);
                         }
                     }
                     if (urls.isEmpty()) {
@@ -365,6 +373,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                 }
             }
 
+            //registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=demo-consumer&dubbo=2.0.2&enable-auto-migration=true&enable.auto.migration=true&id=org.apache.dubbo.config.RegistryConfig&mapping-type=metadata&mapping.type=metadata&pid=98099&qos.port=33333&refer=application%3Ddemo-consumer%26check%3Dtrue%26dubbo%3D2.0.2%26enable-auto-migration%3Dtrue%26enable.auto.migration%3Dtrue%26init%3Dfalse%26interface%3Dorg.apache.dubbo.demo.DemoService%26mapping-type%3Dmetadata%26mapping.type%3Dmetadata%26metadata-type%3Dremote%26methods%3DsayHello%2CsayHelloAsync%26pid%3D98099%26qos.port%3D33333%26register.ip%3D172.22.112.54%26side%3Dconsumer%26sticky%3Dfalse%26timestamp%3D1617267020409&registry=zookeeper&timestamp=1617267970132
             if (urls.size() == 1) {
                 invoker = REF_PROTOCOL.refer(interfaceClass, urls.get(0));
             } else {
