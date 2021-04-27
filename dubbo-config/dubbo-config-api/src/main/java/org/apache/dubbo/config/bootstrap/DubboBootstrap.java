@@ -1086,6 +1086,12 @@ public class DubboBootstrap extends GenericEventListener {
                 });
                 asyncExportingFutures.add(future);
             } else {
+                /*
+                * NOTE: 服务export的一个起点
+                * sc 参数说明：
+                * <dubbo:service beanName="org.apache.dubbo.demo.GreetingService" />
+                * ServiceBean
+                * */
                 sc.export();
                 exportedServices.add(sc);
             }
