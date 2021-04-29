@@ -217,6 +217,23 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
     }
 
+    /**
+     * export 方法对两项配置进行了检查，并根据配置执行相应的动作。首先是 export 配置，这个配置决定了是否导出服务。
+     * 有时候我们只是想本地启动服务进行一些调试工作，我们并不希望把本地启动的服务暴露出去给别人调用。
+     * 此时，我们可通过配置 export 禁止服务导出，比如：
+     * 例如：<dubbo:provider export="false" />
+     *
+     * 以上就是配置检查的相关分析，代码比较多，需要大家耐心看一下。下面对配置检查的逻辑进行简单的总结，如下：
+     *
+     * 检测 <dubbo:service> 标签的 interface 属性合法性，不合法则抛出异常
+     * 检测 ProviderConfig、ApplicationConfig 等核心配置类对象是否为空，若为空，则尝试从其他配置类对象中获取相应的实例。
+     * 检测并处理泛化服务和普通服务类
+     * 检测本地存根配置，并进行相应的处理
+     * 对 ApplicationConfig、RegistryConfig 等配置类进行检测，为空则尝试创建，若无法创建则抛出异常
+     *
+     * 在这些方法中，除了 appendProperties 方法稍微复杂一些。
+     * */
+
     protected synchronized void doExport() {
         if (unexported) {
             throw new IllegalStateException("Already unexported!");
@@ -269,8 +286,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             }
         } else {
             try {
-                interfaceClass = Class.forName(interfaceName, true, Thread.currentThread()
-                        .getContextClassLoader());
+                interfaceClass = Class.forName(interfaceName, true, Thread.currentThread().getContextClassLoader());
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }
@@ -314,6 +330,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         if (path == null || path.length() == 0) {
             path = interfaceName;
         }
+        // 核心的服务暴露
         doExportUrls();
         ProviderModel providerModel = new ProviderModel(getUniqueServiceName(), this, ref);
         ApplicationModel.initProviderModel(getUniqueServiceName(), providerModel);
@@ -351,6 +368,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         unexported = true;
     }
 
+    /**
+     * 首先是通过 loadRegistries 加载注册中心链接，
+     * 然后再遍历 ProtocolConfig 集合导出每个服务。
+     * 并在导出服务的过程中，将服务注册到注册中心
+     * */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
         List<URL> registryURLs = loadRegistries(true);
@@ -461,6 +483,22 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             protocolConfig.setRegister(false);
             map.put("notify", "false");
         }
+        /**
+         * map 中的数据：
+         * {owner=zlz,
+         * side=provider,
+         * application=demo-provider,
+         * methods=sayHello,
+         * qos.port=22222,
+         * dubbo=2.0.2,
+         * pid=89544,
+         * interface=com.alibaba.dubbo.demo.DemoService,
+         * generic=false,
+         * timestamp=1619615603102}
+         *
+         *
+         * */
+
         // export service
         String contextPath = protocolConfig.getContextpath();
         if ((contextPath == null || contextPath.length() == 0) && provider != null) {
