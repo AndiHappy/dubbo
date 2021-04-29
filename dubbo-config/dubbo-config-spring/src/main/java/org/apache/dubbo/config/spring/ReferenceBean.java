@@ -41,7 +41,9 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
 
 /**
  * ReferenceFactoryBean
- * debug的时候，对应的是：<dubbo:reference>
+ * debug的时候，对应的是：<dubbo:reference>,
+ *
+ * NOTE: context.getBean("demoService", DemoService.class) ,类型就是：ReferenceBean
  */
 public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
         ApplicationContextAware, InitializingBean, DisposableBean {
@@ -64,6 +66,10 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
         SpringExtensionFactory.addApplicationContext(applicationContext);
     }
 
+    /**
+     * Return an instance (possibly shared or independent) of the object managed by this factory.
+     * ReferenceBean 本身就继承了FactoryBean<T> 接口
+     * */
     @Override
     public Object getObject() {
         return get();

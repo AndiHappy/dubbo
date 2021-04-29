@@ -198,7 +198,10 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         this.services = services;
     }
 
-    // get的就是 ReferenceConfig 没有的情况下，会进行初始化的
+    /**
+     * get的就是 ReferenceConfig 没有的情况下，会进行初始化的
+     * 就是返回的Ref，这个就是service proxy
+     * */
     public synchronized T get() {
         if (destroyed) {
             throw new IllegalStateException("The invoker of ReferenceConfig(" + url + ") has already destroyed!");

@@ -18,12 +18,24 @@ package org.apache.dubbo.demo.provider;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Scanner;
+
 
 public class Application {
+    private static final String OPERATION_EXIT = "EXIT";
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext("spring/dubbo-provider.xml");
         context.start();
-        System.in.read();
+        //怎么让程序一直运行
+        Scanner scan = new Scanner(System.in);
+        while(scan.hasNext()) {
+            String in = scan.next().toString();
+            if(OPERATION_EXIT.equals(in.toUpperCase()) || OPERATION_EXIT.substring(0, 1).equals(in.toUpperCase())) {
+                System.out.println("您成功已退出！");
+                break;
+            }
+            System.out.println("您输入的值："+in);
+        }
     }
 }

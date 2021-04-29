@@ -33,6 +33,7 @@ public class Application {
         context.start();
         Thread.sleep(1000);
         DemoService demoService = context.getBean("demoService", DemoService.class);
+        demoService.sayHello("ddddd");
         GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
 
         new Thread(() -> {
