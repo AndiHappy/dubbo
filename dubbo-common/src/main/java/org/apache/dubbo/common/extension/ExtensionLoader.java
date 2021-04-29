@@ -863,6 +863,7 @@ public class ExtensionLoader<T> {
                             } else {
                                 clazz = line;
                             }
+                            System.out.println(clazz);
                             if (StringUtils.isNotEmpty(clazz) && !isExcluded(clazz, excludedPackages)) {
                                 loadClass(extensionClasses, resourceURL, Class.forName(clazz, true, classLoader), name, overridden);
                             }
