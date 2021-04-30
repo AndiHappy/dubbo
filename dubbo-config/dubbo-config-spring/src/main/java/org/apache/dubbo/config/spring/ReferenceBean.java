@@ -44,6 +44,15 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  * debug的时候，对应的是：<dubbo:reference>,
  *
  * NOTE: context.getBean("demoService", DemoService.class) ,类型就是：ReferenceBean
+ *
+ * ReferenceBean 既然实现了 ApplicationContextAware，则会在初始化的时候，触发设置ApplicationContext的动作：
+ * if (bean instanceof ApplicationContextAware) {
+ * 			((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
+ * }
+ *
+ *
+ *
+ *
  */
 public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
         ApplicationContextAware, InitializingBean, DisposableBean {

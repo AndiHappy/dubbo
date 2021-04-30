@@ -28,12 +28,10 @@
 
     <dubbo:metadata-report address="zookeeper://127.0.1:2181"/>
 
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+    <dubbo:registry id="zk" address="zookeeper://127.0.0.1:2181"/>
 
-    <dubbo:reference id="demoService" check="true"
-                     interface="org.apache.dubbo.demo.DemoService"/>
+    <dubbo:reference id="demoService" check="true" interface="org.apache.dubbo.demo.DemoService" registry="zk"/>
 
-    <dubbo:reference version="1.0.0" group="greeting" id="greetingService" check="false"
-                     interface="org.apache.dubbo.demo.GreetingService" />
+    <dubbo:reference version="1.0.0" group="greeting" id="greetingService" check="false" interface="org.apache.dubbo.demo.GreetingService" />
 
 </beans>
