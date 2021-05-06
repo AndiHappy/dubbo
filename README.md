@@ -10,9 +10,8 @@ spi.example.ExtensionLoaderExample
 
 #### 服务的export
 
-#### 服务的调用
 
-服务的调用的入口为：
+#### Dubbo bean服务方法的调用
 
 ~~~
  ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-consumer.xml");
@@ -23,4 +22,8 @@ spi.example.ExtensionLoaderExample
 
 首先就是context的getBean，最终调用的是 ReferenceBean的``` org.apache.dubbo.config.ReferenceConfig.get() ```
 至于这其中的机制，见[ReferenceBean配合Spring机制](./ReferenceBean配合Spring机制.md)
+
+服务的调用的过程:[Dubbo服务调用的过程](./Dubbo服务调用的过程.md)
+
+
 

@@ -311,6 +311,27 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         }
         map.put(REGISTER_IP_KEY, hostToRegistry);
 
+        /**
+         * {mapping-type=metadata,
+         * init=false,
+         * side=consumer,
+         * register.ip=172.25.205.105,
+         * release=,
+         * methods=sayHello,sayHelloAsync,
+         * qos.port=33333,
+         * dubbo=2.0.2,
+         * pid=82986,
+         * check=true,
+         * interface=org.apache.dubbo.demo.DemoService,
+         * enable.auto.migration=true,
+         * mapping.type=metadata,
+         * metadata-type=remote,
+         * application=demo-consumer,
+         * sticky=false,
+         * timestamp=1619774075259,
+         * enable-auto-migration=true}
+         *
+         * */
         serviceMetadata.getAttachments().putAll(map);
 
         ref = createProxy(map);
@@ -430,7 +451,8 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     }
 
     /**
-     * This method should be called right after the creation of this class's instance, before any property in other config modules is used.
+     * This method should be called right after the creation of this class's instance,
+     * before any property in other config modules is used.
      * Check each config modules are created properly and override their properties if necessary.
      */
     public void checkAndUpdateSubConfigs() {
